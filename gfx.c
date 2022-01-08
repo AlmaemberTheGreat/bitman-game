@@ -45,3 +45,20 @@ Win *newwin(unsigned width, unsigned height, char *capt)
 
 	return w;
 }
+
+void delwin(Win *w)
+{
+	XUnmapWindow(w->dpy, w->w);
+	XCloseDisplay(w->dpy);
+	free(w);
+}
+
+void wflush(Win *w)
+{
+	XFlush(w->dpy);
+}
+
+void mkline(Win *w, int x1, int y1, int x2, int y2)
+{
+	XDrawLine(w->dpy, w->w, w->gc, x1, y1, x2, y2);
+}
