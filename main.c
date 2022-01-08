@@ -4,8 +4,7 @@
 
 #include "gfx.h"
 
-int
-main()
+int main()
 {
 	Win *w;
 
