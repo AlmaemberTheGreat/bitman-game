@@ -16,6 +16,9 @@ game: ${OBJ}
 main.o: main.c gfx.h
 gfx.o: gfx.c gfx.h
 
+config.h: config.def.h
+	cp config.def.h config.h
+
 clean:
 	rm -f ${OBJ} game
 
