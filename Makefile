@@ -5,7 +5,7 @@ CFLAGS = -std=c89 -Wall -pedantic -D_XOPEN_SOURCE=600
 LDFLAGS = -lX11 -lm
 CC = cc
 
-SRC = main.c
+SRC = main.c gfx.c
 OBJ = ${SRC:.c=.o}
 
 all: game
@@ -13,7 +13,8 @@ all: game
 game: ${OBJ}
 	${CC} ${LDFLAGS} -o $@ ${OBJ}
 
-main.o: main.c
+main.o: main.c gfx.h
+gfx.o: gfx.c gfx.h
 
 clean:
 	rm -f ${OBJ} game
