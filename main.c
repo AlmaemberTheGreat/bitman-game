@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include "config.h"
+
 #include "gfx.h"
 
 int
@@ -7,7 +9,7 @@ main()
 {
 	Win *w;
 
-	w = newwin(1000, 600, "Bitman");
+	w = newwin(WND_WIDTH, WND_HEIGHT, "Bitman");
 	for (;;) ;
 	return 0;
 }

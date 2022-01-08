@@ -13,7 +13,7 @@ all: game
 game: ${OBJ}
 	${CC} ${LDFLAGS} -o $@ ${OBJ}
 
-main.o: main.c gfx.h
+main.o: main.c gfx.h config.h
 gfx.o: gfx.c gfx.h
 
 config.h: config.def.h

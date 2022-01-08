@@ -1,0 +1,2 @@
+#define WND_WIDTH  1000
+#define WND_HEIGHT 600
