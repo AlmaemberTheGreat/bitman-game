@@ -13,3 +13,4 @@ void delwin(Win *w);
 void wflush(Win *w);
 
 void mkline(Win *w, int x1, int y1, int x2, int y2);
+void mktext(Win *w, int x, int y, Font font, char *txt);

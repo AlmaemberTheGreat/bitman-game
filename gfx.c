@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include <X11/Xlib.h>
 
@@ -61,4 +62,16 @@ void wflush(Win *w)
 void mkline(Win *w, int x1, int y1, int x2, int y2)
 {
 	XDrawLine(w->dpy, w->w, w->gc, x1, y1, x2, y2);
+}
+
+void mktext(Win *w, int x, int y, Font font, char *txt)
+{
+	XTextItem item;
+	item.chars = txt;
+	item.nchars = strlen(txt);
+	item.delta = 0;
+	item.font = font;
+
+	/* I have no idea how or what this does */
+	XDrawText(w->dpy, w->w, w->gc, x, y, &item, 1);
 }
