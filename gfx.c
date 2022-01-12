@@ -78,10 +78,10 @@ void mktext(Win *w, int x, int y, Font font, char *txt)
 
 void mkrect(Win *w, int x1, int y1, unsigned wd, unsigned h)
 {
-	XDrawRectangle(w->dpy, w->w, w->gc, x1, y1, w, h);
+	XDrawRectangle(w->dpy, w->w, w->gc, x1, y1, wd, h);
 }
 
 void mkfrec(Win *w, int x1, int y1, unsigned wd, unsigned h)
 {
-	XFillRectangle(w->dpy, w->w, w->gc, x1, y1, w, h);
+	XFillRectangle(w->dpy, w->w, w->gc, x1, y1, wd, h);
 }
