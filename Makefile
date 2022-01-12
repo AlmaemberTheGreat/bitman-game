@@ -1,11 +1,11 @@
 .POSIX:
 .SUFFIXES:
 
-CFLAGS = -std=c89 -Wall -pedantic -D_XOPEN_SOURCE=600
+CFLAGS = -std=c89 -Wall -pedantic -D_XOPEN_SOURCE=600 -g
 LDFLAGS = -lX11 -lm
 CC = cc
 
-SRC = main.c gfx.c game.c
+SRC = main.c gfx.c game.c worldgen.c
 OBJ = ${SRC:.c=.o}
 
 all: game
@@ -16,6 +16,7 @@ game: ${OBJ}
 main.o: main.c gfx.h config.h
 gfx.o: gfx.c gfx.h
 game.o: game.c state.h config.h gfx.h
+worldgen.o: worldgen.c
 
 config.h: config.def.h
 	cp config.def.h config.h
