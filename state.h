@@ -10,3 +10,13 @@ typedef struct GameState {
 
 	int x, y;
 } GameState;
+
+enum SquareType {
+	SQ_WALL,
+	SQ_EMPTY,
+	SQ_ENEMY
+};
+
+typedef struct Square {
+	enum SquareType t;
+} Square;
