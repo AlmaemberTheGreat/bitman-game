@@ -24,9 +24,12 @@ config.h: config.def.h
 clean:
 	rm -f ${OBJ} game
 
+full-clean: clean
+	rm -f config.h
+
 .SUFFIXES: .c .o
 
 .c.o:
 	${CC} -c -o $@ ${CFLAGS} $<
 
-.PHONY: all clean
+.PHONY: all clean full-clean
