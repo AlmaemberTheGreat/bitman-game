@@ -170,6 +170,8 @@ static void mvplayer(GameState *gs, enum Direction dir)
 
 	if (newpagex > N_X_PAGES - 1 || newpagey > N_Y_PAGES - 1) return;
 
+	if (board[newpagex][newpagey][newx][newy].t == SQ_WALL) return;
+
 	gs->x = newx;
 	gs->y = newy;
 	cur_page_x = newpagex;
