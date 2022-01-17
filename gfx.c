@@ -29,7 +29,13 @@ Win *newwin(unsigned width, unsigned height, char *capt)
 	);
 
 	/* From below here, I don't really know what's going on */
-	XSelectInput(dpy, w->w, StructureNotifyMask);
+	XSelectInput(dpy, w->w, StructureNotifyMask |
+	                        KeyPressMask |
+	                        KeyReleaseMask |
+	                        ButtonPressMask |
+	                        ButtonReleaseMask |
+	                        ExposureMask |
+	                        PointerMotionMask);
 	XMapWindow(dpy, w->w);
 	w->gc = XCreateGC(w->dpy, w->w, 0, NULL);
 	XSetForeground(w->dpy, w->gc, w->black);
@@ -57,6 +63,11 @@ void delwin(Win *w)
 void wflush(Win *w)
 {
 	XFlush(w->dpy);
+}
+
+void wclear(Win *w)
+{
+	XClearWindow(w->dpy, w->w);
 }
 
 void mkline(Win *w, int x1, int y1, int x2, int y2)

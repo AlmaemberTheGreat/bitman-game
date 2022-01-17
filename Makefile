@@ -1,7 +1,8 @@
 .POSIX:
 .SUFFIXES:
 
-CFLAGS = -std=c89 -Wall -pedantic -D_XOPEN_SOURCE=600 -g
+# Will fix this after the jam, I promise
+CFLAGS = -std=c89 -Wall -pedantic -D_XOPEN_SOURCE=600 -g -Wno-deprecated-declarations
 LDFLAGS = -lX11 -lm
 CC = cc
 

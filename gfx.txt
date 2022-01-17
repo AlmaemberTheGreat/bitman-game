@@ -1,0 +1,47 @@
+#include <stdlib.h>                                                        break;
+#include <string.h>                                                }
+                                                               
+#include <X11/Xlib.h>                                              XStoreName(w->dpy, w->w, capt);
+                                                               
+#include "gfx.h"                                                   return w;
+                                                               }
+/* Open a new window. Returns NULL if failed */                
+Win *newwin(unsigned width, unsigned height, char *capt)       void delwin(Win *w)
+{                                                              {
+    Win *w;                                                        XUnmapWindow(w->dpy, w->w);
+    Display *dpy;                                                  XCloseDisplay(w->dpy);
+                                                                   free(w);
+    w = malloc(sizeof(*w));                                    }
+    if (!w) return NULL;                                       
+                                                               void wflush(Win *w)
+    dpy = XOpenDisplay(NULL);                                  {
+    if (!dpy) return NULL;                                         XFlush(w->dpy);
+    w->dpy = dpy;                                              }
+                                                               
+    w->black = BlackPixel(dpy, DefaultScreen(dpy));            void mkline(Win *w, int x1, int y1, int x2, int y2)
+    w->white = WhitePixel(dpy, DefaultScreen(dpy));            {
+                                                                   XDrawLine(w->dpy, w->w, w->gc, x1, y1, x2, y2);
+    w->w = XCreateSimpleWindow(                                }
+        dpy,                                                   
+        DefaultRootWindow(dpy),                                void mktext(Win *w, int x, int y, Font font, char *txt)
+        0, 0, width, height, 0,                                {
+        w->black, w->white                                         XTextItem item;
+    );                                                             item.chars = txt;
+                                                                   item.nchars = strlen(txt);
+    /* From below here, I don't really know what's going on */     item.delta = 0;
+    XSelectInput(dpy, w->w, StructureNotifyMask |                  item.font = font;
+                            KeyPressMask |                     
+                            KeyReleaseMask |                       /* I have no idea how or what this does */
+                            ButtonPressMask |                      XDrawText(w->dpy, w->w, w->gc, x, y, &item, 1);
+                            ButtonReleaseMask |                }
+                            ExposureMask |                     
+                            PointerMotionMask);                void mkrect(Win *w, int x1, int y1, unsigned wd, unsigned h)
+    XMapWindow(dpy, w->w);                                     {
+    w->gc = XCreateGC(w->dpy, w->w, 0, NULL);                      XDrawRectangle(w->dpy, w->w, w->gc, x1, y1, wd, h);
+    XSetForeground(w->dpy, w->gc, w->black);                   }
+                                                               
+    for (;;) {                                                 void mkfrec(Win *w, int x1, int y1, unsigned wd, unsigned h)
+        /* Asynchronous programming before its time? */        {
+        XEvent e;                                                  XFillRectangle(w->dpy, w->w, w->gc, x1, y1, wd, h);
+        XNextEvent(dpy, &e);                                   }
+        if (e.type == MapNotify)
