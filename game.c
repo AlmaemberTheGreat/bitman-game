@@ -119,6 +119,20 @@ static void setfield(unsigned x, unsigned y, Square sq, void *ctx)
 
 	boardp = ctx;
 
+	/* You might be wondering what the fuck this is.
+	   Well, this code is a game jam, but it is quite rushed.
+	   The world generation code is some of the worst I've written,
+	   and I'm not gonna fix it. However, this is the only place it
+	   has problems with, so we'll just do boundary checks and
+	   silently ignore any call that is out of bounds.
+
+	   Good enough for worldgen.
+	 */
+	if (pagex >= N_X_PAGES) return;
+	if (pagey >= N_Y_PAGES) return;
+	if (offsetx >= H_SQ_PER_WND) return;
+	if (offsety >= V_SQ_PER_WND) return;
+
 	/* I'm sorry */
 	(*boardp)[pagex][pagey][offsetx][offsety] = sq;
 }
