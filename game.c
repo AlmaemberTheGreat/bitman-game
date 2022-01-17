@@ -149,22 +149,22 @@ static void mvplayer(GameState *gs, enum Direction dir)
 	case RIGHT: newx += 1; break;
 	}
 
-	if (newx > H_SQ_PER_WND) {
+	if (newx > H_SQ_PER_WND - 1) {
 		newx = 0;
 		newpagex += 1;
 	}
-	if (newy > V_SQ_PER_WND) {
+	if (newy > V_SQ_PER_WND - 1) {
 		newy = 0;
 		newpagey += 1;
 	}
 	if (newx < 0) {
 		newx = H_SQ_PER_WND - 1;
-		if (!newpagex) newpagex -= 1;
+		if (newpagex) newpagex -= 1;
 		else return;
 	}
 	if (newy < 0) {
 		newy = V_SQ_PER_WND - 1;
-		if (!newpagey) newpagey -= 1;
+		if (newpagey) newpagey -= 1;
 		else return;
 	}
 
