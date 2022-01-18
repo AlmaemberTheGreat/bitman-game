@@ -1,4 +1,5 @@
 #include <X11/keysym.h>
+#include <stdio.h>
 
 #include "state.h"
 #include "gfx.h"
@@ -38,6 +39,7 @@ void gloop(Win *w)
 	Square (*boardp)[N_X_PAGES][N_Y_PAGES][H_SQ_PER_WND][V_SQ_PER_WND] = &board;
 	XEvent e;
 	size_t i, j, k, l;
+	unsigned n_surplus = 0;
 
 	genwld(N_X_PAGES*H_SQ_PER_WND, N_Y_PAGES*V_SQ_PER_WND, setfield, boardp, enemies);
 
@@ -48,11 +50,16 @@ void gloop(Win *w)
 				for (l = 0; l < V_SQ_PER_WND; ++l) {
 					if (board[i][j][k][l].t == SQ_ENEMY) {
 						((Enemy *)(board[i][j][k][l].data))->sq = &board[i][j][k][l];
+						/* Count how many enemies share a soul */
+						if (((Enemy *)(board[i][j][k][l].data))->hosts > 1) n_surplus++;
 					}
 				}
 			}
 		}
 	}
+
+	printf("Surplus enemies: %u\n", n_surplus);
+
 	/* Required to fix a bug I don't know the cause of */
 	board[0][0][0][0].t = SQ_WALL;
 

@@ -72,6 +72,7 @@ void genwld(unsigned w, unsigned h, void (*set)(unsigned x, unsigned y, Square s
 					(enemies + enemies_used)->bits = rand() % UINT_MAX;
 					/* we don't have access to the board directly, so we'll set the `sq` field
 					in game.c */
+					(enemies + enemies_used)->sq = NULL;
 				}
 
 				set(j, k, sq, ctx);
@@ -141,6 +142,7 @@ static void drvline(unsigned x, unsigned y1, unsigned y2,
 			/* we don't have access to the board directly, so we'll set the `sq` field
 			in game.c */
 			(enemies + enemies_used)->sq = NULL;
+			(enemies + enemies_used)->hosts++;
 		} else {
 			sq.t = SQ_EMPTY;
 		}
@@ -153,8 +155,22 @@ static void drhline(unsigned y, unsigned x1, unsigned x2,
 {
 	unsigned i;
 	Square sq = {SQ_EMPTY};
+	unsigned enemies_used = N_ENEMIES / 2;
 
 	for (i = x1; i < x2; ++i) {
+		if (enemies_used < N_ENEMIES && rand() % 3 == 0) {
+			sq.t = SQ_ENEMY;
+			enemies_used++;
+			sq.data = &enemies[+enemies_used];
+			/*                 ^ just for fun */
+			(enemies + enemies_used)->nbits = rand() % 15 + 1;
+			(enemies + enemies_used)->bits = rand() % UINT_MAX;
+			/* we don't have access to the board directly, so we'll set the `sq` field
+			in game.c */
+			(enemies + enemies_used)->sq = NULL;
+		} else {
+			sq.t = SQ_EMPTY;
+		}
 		set(i, y, sq, ctx);
 	}
 }

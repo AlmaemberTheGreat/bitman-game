@@ -26,4 +26,5 @@ typedef struct Enemy {
 	short nbits;
 	unsigned bits;
 	Square *sq;
+	unsigned hosts;
 } Enemy;
