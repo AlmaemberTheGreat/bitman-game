@@ -17,7 +17,8 @@ game: ${OBJ}
 main.o: main.c gfx.h config.h
 gfx.o: gfx.c gfx.h
 game.o: game.c state.h config.h gfx.h
-worldgen.o: worldgen.c
+worldgen.o: worldgen.c config.h state.h
+
 
 config.h: config.def.h
 	cp config.def.h config.h
