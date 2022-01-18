@@ -7,7 +7,7 @@
 #define N_X_PAGES 10
 #define N_Y_PAGES 10
 
-#define ENABLE_GRID 1
+#define ENABLE_GRID 0
 
 #define MAX_ROOMS 100
 #define MAX_ROOM_WIDTH 6

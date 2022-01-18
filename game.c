@@ -162,7 +162,7 @@ static void renderplayer(Win *w, GameState *gs)
 	realx = SQ_WIDTH * gs->x;
 	realy = (SQ_HEIGHT * gs->y) + TOP_BAR_HEIGHT;
 
-	mkfrec(w, realx+5, realy+5, SQ_WIDTH-10, SQ_HEIGHT-10);
+	mkfrec(w, realx+6, realy+6, SQ_WIDTH-12, SQ_HEIGHT-12);
 }
 
 static void mvplayer(GameState *gs, enum Direction dir)
