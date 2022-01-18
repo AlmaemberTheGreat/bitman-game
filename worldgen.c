@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <assert.h>
+#include <limits.h>
 
 #include "config.h"
 
@@ -11,15 +12,16 @@ struct Room {
 };
 
 static void drvline(unsigned x, unsigned y1, unsigned y2,
-                    void (*set)(unsigned x, unsigned y, Square sq, void *ctx), void *ctx);
+                    void (*set)(unsigned x, unsigned y, Square sq, void *ctx), void *ctx, Enemy *enemies);
 static void drhline(unsigned y, unsigned x1, unsigned x2,
-                    void (*set)(unsigned x, unsigned y, Square sq, void *ctx), void *ctx);
+                    void (*set)(unsigned x, unsigned y, Square sq, void *ctx), void *ctx, Enemy *enemies);
 
-void genwld(unsigned w, unsigned h, void (*set)(unsigned x, unsigned y, Square sq, void *ctx), void *ctx)
+void genwld(unsigned w, unsigned h, void (*set)(unsigned x, unsigned y, Square sq, void *ctx), void *ctx, Enemy *enemies)
 {
 	unsigned nrooms;
 	unsigned i, j, k;
 	struct Room *rooms;
+	unsigned enemies_used = 0;
 	
 	/* Create rooms */
 	nrooms = rand() % MAX_ROOMS;
@@ -60,6 +62,18 @@ void genwld(unsigned w, unsigned h, void (*set)(unsigned x, unsigned y, Square s
 		for (j = rooms[i].x1; j < rooms[i].x2; ++j) {
 			for (k = rooms[i].y1; k < rooms[i].y2; ++k) {
 				Square sq = {SQ_EMPTY};
+
+				if (enemies_used < (N_ENEMIES / 2) && rand() % 3 == 0) {
+					sq.t = SQ_ENEMY;
+					enemies_used++;
+					sq.data = &enemies[+enemies_used];
+					/*                 ^ just for fun */
+					(enemies + enemies_used)->nbits = rand() % 15 + 1;
+					(enemies + enemies_used)->bits = rand() % UINT_MAX;
+					/* we don't have access to the board directly, so we'll set the `sq` field
+					in game.c */
+				}
+
 				set(j, k, sq, ctx);
 			}
 		}
@@ -84,25 +98,25 @@ void genwld(unsigned w, unsigned h, void (*set)(unsigned x, unsigned y, Square s
 
 		if (rand() % 2 == 0) {
 			if (ty > sy) {
-				drvline(tx, sy, ty, set, ctx);
+				drvline(tx, sy, ty, set, ctx, enemies);
 			} else {
-				drvline(tx, ty, sy, set, ctx);
+				drvline(tx, ty, sy, set, ctx, enemies);
 			}
 			if (tx > sx) {
-				drhline(sy, sx, tx, set, ctx);
+				drhline(sy, sx, tx, set, ctx, enemies);
 			} else {
-				drhline(sy, tx, sx, set, ctx);
+				drhline(sy, tx, sx, set, ctx, enemies);
 			}
 		} else {
 			if (ty > sy) {
-				drvline(sx, sy, ty, set, ctx);
+				drvline(sx, sy, ty, set, ctx, enemies);
 			} else {
-				drvline(sx, ty, sy, set, ctx);
+				drvline(sx, ty, sy, set, ctx, enemies);
 			}
 			if (tx > sx) {
-				drhline(ty, sx, tx, set, ctx);
+				drhline(ty, sx, tx, set, ctx, enemies);
 			} else {
-				drhline(ty, tx, sx, set, ctx);
+				drhline(ty, tx, sx, set, ctx, enemies);
 			}
 		}
 	}
@@ -110,18 +124,32 @@ void genwld(unsigned w, unsigned h, void (*set)(unsigned x, unsigned y, Square s
 }
 
 static void drvline(unsigned x, unsigned y1, unsigned y2,
-                    void (*set)(unsigned x, unsigned y, Square sq, void *ctx), void *ctx)
+                    void (*set)(unsigned x, unsigned y, Square sq, void *ctx), void *ctx, Enemy *enemies)
 {
 	unsigned i;
 	Square sq = {SQ_EMPTY};
+	unsigned enemies_used = N_ENEMIES / 2;
 
 	for (i = y1; i < y2; ++i) {
+		if (enemies_used < N_ENEMIES && rand() % 3 == 0) {
+			sq.t = SQ_ENEMY;
+			enemies_used++;
+			sq.data = &enemies[+enemies_used];
+			/*                 ^ just for fun */
+			(enemies + enemies_used)->nbits = rand() % 15 + 1;
+			(enemies + enemies_used)->bits = rand() % UINT_MAX;
+			/* we don't have access to the board directly, so we'll set the `sq` field
+			in game.c */
+			(enemies + enemies_used)->sq = NULL;
+		} else {
+			sq.t = SQ_EMPTY;
+		}
 		set(x, i, sq, ctx);
 	}
 }
 
 static void drhline(unsigned y, unsigned x1, unsigned x2,
-                    void (*set)(unsigned x, unsigned y, Square sq, void *ctx), void *ctx)
+                    void (*set)(unsigned x, unsigned y, Square sq, void *ctx), void *ctx, Enemy *enemies)
 {
 	unsigned i;
 	Square sq = {SQ_EMPTY};

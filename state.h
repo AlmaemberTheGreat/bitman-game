@@ -19,4 +19,11 @@ enum SquareType {
 
 typedef struct Square {
 	enum SquareType t;
+	void *data;
 } Square;
+
+typedef struct Enemy {
+	short nbits;
+	unsigned bits;
+	Square *sq;
+} Enemy;

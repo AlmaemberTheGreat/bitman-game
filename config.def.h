@@ -15,6 +15,8 @@
 #define MAX_ROOM_HEIGHT 6
 #define MIN_ROOM_HEIGHT 3
 
+#define N_ENEMIES 1000
+
 /* calculations below, DO NOT edit for configuration */
 #define TOP_BAR_HEIGHT ((unsigned)(TOP_BAR_PCNT / (double)100 * WND_HEIGHT))
 #define GAMEAREA_HEIGHT (WND_HEIGHT - TOP_BAR_HEIGHT)

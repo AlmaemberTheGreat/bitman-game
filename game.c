@@ -4,7 +4,7 @@
 #include "gfx.h"
 #include "config.h"
 
-void genwld(unsigned w, unsigned h, void (*set)(unsigned x, unsigned y, Square sq, void *ctx), void *ctx);
+void genwld(unsigned w, unsigned h, void (*set)(unsigned x, unsigned y, Square sq, void *ctx), void *ctx, Enemy *enemies);
 
 static char *ops[] = {
 	"OR",
@@ -19,6 +19,7 @@ enum Direction {
 	RIGHT
 };
 
+static Enemy enemies[N_ENEMIES];
 static Square board[N_X_PAGES][N_Y_PAGES][H_SQ_PER_WND][V_SQ_PER_WND];
 size_t cur_page_x, cur_page_y;
 
@@ -36,8 +37,24 @@ void gloop(Win *w)
 	};
 	Square (*boardp)[N_X_PAGES][N_Y_PAGES][H_SQ_PER_WND][V_SQ_PER_WND] = &board;
 	XEvent e;
+	size_t i, j, k, l;
 
-	genwld(N_X_PAGES*H_SQ_PER_WND, N_Y_PAGES*V_SQ_PER_WND, setfield, boardp);
+	genwld(N_X_PAGES*H_SQ_PER_WND, N_Y_PAGES*V_SQ_PER_WND, setfield, boardp, enemies);
+
+	/* I can do nothing but apologise for this */
+	for (i = 0; i < N_X_PAGES; ++i) {
+		for (j = 0; j < N_Y_PAGES; ++j) {
+			for (k = 0; k < H_SQ_PER_WND; ++k) {
+				for (l = 0; l < V_SQ_PER_WND; ++l) {
+					if (board[i][j][k][l].t == SQ_ENEMY) {
+						((Enemy *)(board[i][j][k][l].data))->sq = &board[i][j][k][l];
+					}
+				}
+			}
+		}
+	}
+	/* Required to fix a bug I don't know the cause of */
+	board[0][0][0][0].t = SQ_WALL;
 
 	for (;;) {
 		wclear(w);
@@ -98,6 +115,7 @@ static void renderboard(Win *w)
 			}
 
 			case SQ_ENEMY: {
+				mkrect(w, SQ_WIDTH*i+4, TOP_BAR_HEIGHT+SQ_HEIGHT*j+4, SQ_WIDTH-8, SQ_HEIGHT-8);
 				break;
 			}
 
