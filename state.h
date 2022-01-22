@@ -9,6 +9,7 @@ typedef struct GameState {
 	enum BitOp op;
 
 	int x, y;
+	unsigned goal;
 } GameState;
 
 enum SquareType {

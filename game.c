@@ -1,11 +1,14 @@
 #include <X11/keysym.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "state.h"
 #include "gfx.h"
 #include "config.h"
 
 void genwld(unsigned w, unsigned h, void (*set)(unsigned x, unsigned y, Square sq, void *ctx), void *ctx, Enemy *enemies);
+void battle(Win *w, Enemy e, GameState *gs);
+
 
 static char *ops[] = {
 	"OR",
@@ -27,7 +30,7 @@ size_t cur_page_x, cur_page_y;
 static void renderboard(Win *w);
 static void setfield(unsigned x, unsigned y, Square sq, void *ctx);
 static void renderplayer(Win *w, GameState *gs);
-static void mvplayer(GameState *gs, enum Direction dir);
+static void mvplayer(GameState *gs, enum Direction dir, Win *w);
 
 void gloop(Win *w)
 {
@@ -85,18 +88,30 @@ void gloop(Win *w)
 			case XK_Escape:
 				goto after_loop;
 			case XK_Up:
-				mvplayer(&gs, UP);
+				mvplayer(&gs, UP, w);
 				break;
 			case XK_Down:
-				mvplayer(&gs, DOWN);
+				mvplayer(&gs, DOWN, w);
 				break;
 			case XK_Right:
-				mvplayer(&gs, RIGHT);
+				mvplayer(&gs, RIGHT, w);
 				break;
 			case XK_Left:
-				mvplayer(&gs, LEFT);
+				mvplayer(&gs, LEFT, w);
 				break;
 			}
+		}
+		gs.goal = rand();
+		gs.op = rand() % 3;
+
+		for (i = j = 0; i < N_ENEMIES; i++) {
+			j += enemies[i].hosts;
+		}
+		if (j == 0) {
+			wclear(w);
+			delwin(w);
+			printf("You win! Great, innit?\n");
+			exit(0);
 		}
 	}
 	after_loop:;
@@ -172,7 +187,7 @@ static void renderplayer(Win *w, GameState *gs)
 	mkfrec(w, realx+6, realy+6, SQ_WIDTH-12, SQ_HEIGHT-12);
 }
 
-static void mvplayer(GameState *gs, enum Direction dir)
+static void mvplayer(GameState *gs, enum Direction dir, Win *w)
 {
 	int newx, newy;
 	size_t newpagex, newpagey;
@@ -210,6 +225,15 @@ static void mvplayer(GameState *gs, enum Direction dir)
 	if (newpagex > N_X_PAGES - 1 || newpagey > N_Y_PAGES - 1) return;
 
 	if (board[newpagex][newpagey][newx][newy].t == SQ_WALL) return;
+	if (board[newpagex][newpagey][newx][newy].t == SQ_ENEMY) {
+		if (board[newpagex][newpagey][newx][newy].data != NULL) {
+			battle(w, *(Enemy *)(board[newpagex][newpagey][newx][newy].data), gs);
+			board[newpagex][newpagey][newx][newy].t = SQ_EMPTY;
+			((Enemy *)(board[newpagex][newpagey][newx][newy].data))->hosts--;
+		} else {
+			board[newpagex][newpagey][newx][newy].t = SQ_EMPTY;
+		}
+	}
 
 	gs->x = newx;
 	gs->y = newy;
